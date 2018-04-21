@@ -33,10 +33,13 @@ def saveAs():
 
 # open file function
 def openFile():
-    #open file
-    file = tkfd.askopenfile(mode='r')
-    #read the contents of the file to var
-    fileContent = file.read()
+    try:
+        #open file
+        file = tkfd.askopenfile(mode='r')
+        #read the contents of the file to var
+        fileContent = file.read()
+    except:
+        messagebox.showwarning("Unable to open file", "Unable to open the file specified. \nMake sure to only open text files.")
 
     #clear current content and load new content from var
     content.delete(1.0,END)
