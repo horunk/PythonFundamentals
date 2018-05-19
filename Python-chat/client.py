@@ -4,15 +4,16 @@ from tkinter import *
 from tkinter import messagebox
 import tkinter
 import time
+import sys
 
 
 def receive():
-    """Handles receiving of messages."""
     while True:
         time.sleep(0.3)
         try:
             msg = client_socket.recv(SIZE).decode("utf8")
             message_list.insert(tkinter.END, msg)
+            message_list.see("end")
         except:
             break
 
@@ -26,9 +27,13 @@ def send(event=None):
 def exitProgram():
     if messagebox.askyesno("Are you sure?", "Are you sure you wish to close the program?"):
         message_box.set("$closeconnection")
+        time.sleep(0.1)
         send()
+        time.sleep(0.5)
         client_socket.close()
+        time.sleep(0.5)
         top.quit()
+        quit()
     else:
         return
 

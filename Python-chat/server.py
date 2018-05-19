@@ -7,34 +7,32 @@ def get_connections():
         time.sleep(0.3)
         client, client_address = SERVER.accept()
         print("%s:%s connected." % client_address)
-        client.send(bytes("Insert your nickname and press enter!", "utf8"))
+        client.send(bytes("Insert your nickname and press enter to start chatting.", "utf8"))
         addresses[client] = client_address
         Thread(target=client_processing, args=(client,)).start()
 
 def client_processing(client):  
-    name = client.recv(BUFSIZ).decode("utf8")
+    name = client.recv(SIZE).decode("utf8")
     welcome = 'Welcome %s!' % name
     client.send(bytes(welcome, "utf8"))
-    msg = "%s has joined the chat." % name
+    msg = "%s has joined!" % name
     send_all(bytes(msg, "utf8"))
     clients[client] = name
 
     while True:
         time.sleep(0.3)
-        msg = client.recv(BUFSIZ)
+        msg = client.recv(SIZE)
         if msg != bytes("$closeconnection", "utf8"):
             send_all(msg, name+": ")
         else:
             client.send(bytes("$closeconnection", "utf8"))
             client.close()
             del clients[client]
-            send_all(bytes("%s has left the chat." % name, "utf8"))
+            send_all(bytes("%s has left the building!" % name, "utf8"))
             break
 
 
-def send_all(msg, prefix=""):  # prefix is for name identification.
-    """sends a message to all the clients."""
-
+def send_all(msg, prefix=""): 
     for sock in clients:
         sock.send(bytes(prefix, "utf8")+msg)
 
@@ -44,15 +42,15 @@ addresses = {}
 
 HOST = 'localhost'
 PORT = 6666
-BUFSIZ = 1024
-ADDR = (HOST, PORT)
+SIZE = 4096
+ADDRESS = (HOST, PORT)
 
 SERVER = socket(AF_INET, SOCK_STREAM)
-SERVER.bind(ADDR)
+SERVER.bind(ADDRESS)
 
 if __name__ == "__main__":
     SERVER.listen(5)
-    print("Waiting for connection...")
+    print("Ready for connections...")
     ACCEPT_THREAD = Thread(target=get_connections)
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
